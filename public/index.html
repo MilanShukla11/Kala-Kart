@@ -1,0 +1,602 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Haat Bazar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-50 font-sans">
+  <nav class="bg-amber-800 p-4 text-white shadow-md relative z-10">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <a href="/index.html" class="text-2xl font-bold tracking-wide hover:text-amber-200">🏕️ Digital Haat Bazar</a>
+      
+      <div id="nav-buttons" class="space-x-3 flex items-center">
+        <a href="/artisan.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-700 px-4 py-2 rounded shadow hidden md:inline-block">Seller Portal</a>
+        <a href="/ngo.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-900 px-4 py-2 rounded shadow hidden md:inline-block">NGO Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-amber-900 text-amber-50 py-16 px-8 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/woven-light.png')]"></div>
+    <div class="max-w-4xl mx-auto relative z-10">
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Empowering Artisans, Preserving Heritage.</h2>
+      <p class="text-lg md:text-xl text-amber-200 mb-8 leading-relaxed">
+        The Digital Haat Bazar bridges the gap between remote tribal communities and the global market. 
+        Supported by dedicated NGOs, we bring authentic, handcrafted artifacts straight from the village to your doorstep. Every purchase directly sustains a family and a tradition.
+      </p>
+    </div>
+  </header>
+
+  <section class="bg-white py-12 border-b border-amber-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-8">
+      <h3 class="text-2xl font-bold text-center text-gray-800 mb-8">Our Collective Impact</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+        <div class="p-6 bg-amber-50 rounded-xl border border-amber-100 shadow-sm hover:shadow-md transition">
+          <h4 class="text-4xl font-extrabold text-amber-700 mb-2">50+</h4>
+          <p class="text-gray-600 font-semibold uppercase tracking-wide text-sm">Villages Connected</p>
+        </div>
+        <div class="p-6 bg-amber-50 rounded-xl border border-amber-100 shadow-sm hover:shadow-md transition">
+          <h4 class="text-4xl font-extrabold text-amber-700 mb-2">1,200+</h4>
+          <p class="text-gray-600 font-semibold uppercase tracking-wide text-sm">Artisans Empowered</p>
+        </div>
+        <div class="p-6 bg-amber-50 rounded-xl border border-amber-100 shadow-sm hover:shadow-md transition">
+          <h4 class="text-4xl font-extrabold text-green-600 mb-2">100%</h4>
+          <p class="text-gray-600 font-semibold uppercase tracking-wide text-sm">NGO Verified Fair Trade</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-6xl mx-auto p-8 mt-4">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+      <h2 class="text-3xl font-bold text-gray-800">This Week's Market</h2>
+      
+      <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto justify-start md:justify-end">
+        <button onclick="filterProducts('all')" class="px-5 py-2 bg-amber-700 text-white rounded-full text-sm font-bold shadow hover:bg-amber-800 transition focus:ring-2 focus:ring-amber-500">All Items</button>
+        <button onclick="filterProducts('Terracotta')" class="px-5 py-2 bg-white text-amber-800 border border-amber-700 rounded-full text-sm font-bold shadow hover:bg-amber-50 transition focus:ring-2 focus:ring-amber-500">Terracotta</button>
+        <button onclick="filterProducts('Weave')" class="px-5 py-2 bg-white text-amber-800 border border-amber-700 rounded-full text-sm font-bold shadow hover:bg-amber-50 transition focus:ring-2 focus:ring-amber-500">Handlooms</button>
+        <button onclick="filterProducts('Art')" class="px-5 py-2 bg-white text-amber-800 border border-amber-700 rounded-full text-sm font-bold shadow hover:bg-amber-50 transition focus:ring-2 focus:ring-amber-500">Tribal Art</button>
+      </div>
+    </div>
+
+    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <p class="text-gray-500 col-span-3 text-center py-10">Loading the bazaar...</p>
+    </div>
+  </main>
+
+  <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex justify-center items-center z-50 backdrop-blur-sm">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full relative border-t-4 border-amber-600">
+      <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Haat Bazar UPI</h3>
+      <p class="text-sm text-gray-500 mb-6 font-medium">Test Mode: Enter any UPI ID to simulate checkout.</p>
+      
+      <div class="mb-5 bg-amber-50 p-4 rounded-lg text-center border border-amber-100">
+        <label class="block text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">Amount to Pay</label>
+        <p id="modal-amount" class="text-4xl font-black text-green-600">₹0</p>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-bold text-gray-700 mb-2">Enter UPI ID</label>
+        <input type="text" placeholder="akash@okaxis" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium">
+      </div>
+
+      <button id="confirm-pay-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg transition-transform transform hover:scale-[1.02]">
+        Pay Securely
+      </button>
+      
+      <button onclick="closeModal()" class="w-full mt-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 rounded-lg transition-colors">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const backendUrl = 'http://localhost:3000';
+    let allProducts = []; // Store all fetched products here for fast filtering
+
+    // ==========================================
+    // DYNAMIC NAVBAR AUTHENTICATION
+    // ==========================================
+    function setupNavbar() {
+      const navContainer = document.getElementById('nav-buttons');
+      const currentUserRole = localStorage.getItem('userRole');
+
+      if (currentUserRole) {
+        // User IS logged in: Show Logout button
+        navContainer.innerHTML += `
+          <button onclick="logout()" class="text-sm font-bold hover:bg-red-700 text-white bg-red-600 px-5 py-2 rounded-full shadow-md ml-2 transition">
+            Logout
+          </button>
+        `;
+      } else {
+        // User is NOT logged in: Show Login button
+        navContainer.innerHTML += `
+          <a href="/login.html" class="text-sm font-bold hover:bg-amber-100 text-amber-900 bg-amber-50 px-6 py-2 rounded-full shadow-md ml-2 transition transform hover:scale-105">
+            Login / Sign Up
+          </a>
+        `;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('userRole');
+      window.location.reload(); // Refresh the page to reset the UI
+    }
+
+    // Run this immediately when the page loads
+    setupNavbar();
+
+    // Fetch products once on load
+    async function loadMarketplace() {
+      try {
+        const response = await fetch(`${backendUrl}/api/products`);
+        allProducts = await response.json();
+        renderProducts(allProducts);
+      } catch (error) {
+        console.error('Error loading market:', error);
+        document.getElementById('product-grid').innerHTML = '<p class="text-red-500 col-span-3 text-center">Failed to load marketplace. Please ensure the server is running.</p>';
+      }
+    }
+
+    // Render an array of products to the grid
+    function renderProducts(productsToDisplay) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = ''; 
+
+      if(productsToDisplay.length === 0) {
+          grid.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-12 text-lg font-medium">No items found in this category.</p>';
+          return;
+      }
+
+      // 1. Check if the user is logged in
+      const currentUserRole = localStorage.getItem('userRole');
+
+      productsToDisplay.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col';
+        
+        const imgUrl = product.image_url || 'https://via.placeholder.com/400x300?text=Haat+Bazar';
+        
+        // 2. Smart Button Logic
+        let actionButton = '';
+        if (currentUserRole) {
+          // If logged in, show the standard Buy Now button
+          actionButton = `
+            <button onclick="initiateCheckout(${product.id}, ${product.price})" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors">
+              Buy Now
+            </button>`;
+        } else {
+          // If NOT logged in, show a Login button that redirects them
+          actionButton = `
+            <button onclick="window.location.href='/login.html'" class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors">
+              Login to Buy
+            </button>`;
+        }
+
+        card.innerHTML = `
+          <div class="relative h-56">
+            <img src="${imgUrl}" alt="${product.title}" class="w-full h-full object-cover">
+            <div class="absolute bottom-3 left-3 bg-amber-600 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm">
+               ${getCategoryName(product.category_id)}
+            </div>
+            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-amber-800 shadow">
+              Verified
+            </div>
+          </div>
+          <div class="p-6 flex flex-col flex-grow">
+            <h3 class="text-xl font-extrabold text-gray-800 line-clamp-1">${product.title}</h3>
+            <p class="text-xs text-amber-700 font-bold mt-1 uppercase tracking-wide">
+              By ${product.artisan_name || 'Local Artisan'} • ${product.village || 'Tribal Region'}
+            </p>
+            <p class="text-gray-600 text-sm mt-3 line-clamp-2 flex-grow">${product.description}</p>
+            
+            <div class="mt-6 flex justify-between items-center border-t border-gray-100 pt-4">
+              <span class="text-3xl font-black text-green-700">₹${product.price}</span>
+              ${actionButton} 
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Category Filter Logic
+    function filterProducts(keyword) {
+      if (keyword === 'all') {
+        renderProducts(allProducts);
+        return;
+      }
+      // Simple frontend search checking if title or description contains the keyword
+      const filtered = allProducts.filter(p => 
+        p.title.toLowerCase().includes(keyword.toLowerCase()) || 
+        p.description.toLowerCase().includes(keyword.toLowerCase())
+      );
+      renderProducts(filtered);
+    }
+
+    // Checkout Logic
+    let currentPendingOrderId = null;
+
+    async function initiateCheckout(productId, price) {
+      try {
+        const response = await fetch(`${backendUrl}/api/orders/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, price })
+        });
+        const data = await response.json();
+        
+        currentPendingOrderId = data.dbOrderId;
+        document.getElementById('modal-amount').innerText = `₹${price}`;
+        document.getElementById('payment-modal').classList.remove('hidden');
+      } catch (error) {
+        console.error("Checkout failed:", error);
+        alert("Failed to initiate order.");
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('payment-modal').classList.add('hidden');
+      currentPendingOrderId = null;
+    }
+
+    document.getElementById('confirm-pay-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('confirm-pay-btn');
+      btn.innerText = "Processing secure payment...";
+      btn.disabled = true;
+
+      try {
+        await fetch(`${backendUrl}/api/orders/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dbOrderId: currentPendingOrderId })
+        });
+
+        alert("Payment Successful! The NGO will package this item and notify the artisan.");
+        closeModal();
+      } catch (error) {
+        console.error("Payment failed:", error);
+        alert("Payment processing failed.");
+      } finally {
+        btn.innerText = "Pay Securely";
+        btn.disabled = false;
+      }
+    });
+
+    loadMarketplace();
+    function getCategoryName(id) {
+      const categories = {
+        1: 'Terracotta',
+        2: 'Handloom',
+        3: 'Tribal Art',
+        4: 'Bamboo Craft'
+      };
+      return categories[id] || 'Handicraft';
+    }
+  </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kala-Kart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-amber-50 font-sans">
+  
+  <nav class="bg-amber-800 p-4 text-white shadow-md relative z-10">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <a href="/index.html" class="text-2xl font-bold tracking-wide hover:text-amber-200">Kala-Kart</a>
+      
+      <div class="flex items-center gap-3">
+        <a href="/artisan.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-700 px-3 py-2 rounded shadow hidden md:inline-block">Seller Portal</a>
+        <a href="/ngo.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-900 px-3 py-2 rounded shadow hidden md:inline-block">NGO Dashboard</a>
+        
+        <div id="auth-buttons" class="flex items-center gap-2"></div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-amber-900 text-amber-50 py-12 px-8 text-center relative">
+    <div class="max-w-4xl mx-auto relative z-10">
+      <h2 class="text-4xl font-extrabold mb-4 tracking-tight">गांव से शहर तक – असली कारीगरी, सीधे कारीगरों से</h2>
+      <p class="text-lg text-amber-200">Authentic, handcrafted artifacts straight from the village to your doorstep.</p>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-8 mt-4">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+      <h2 class="text-3xl font-bold text-gray-800">Available products</h2>
+      <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto justify-start md:justify-end">
+        <button onclick="filterProducts('all')" class="px-5 py-2 bg-amber-700 text-white rounded-full text-sm font-bold shadow">All Items</button>
+        <button onclick="filterProducts('Terracotta')" class="px-5 py-2 bg-white text-amber-800 border border-amber-700 rounded-full text-sm font-bold shadow">Terracotta</button>
+        <button onclick="filterProducts('Weave')" class="px-5 py-2 bg-white text-amber-800 border border-amber-700 rounded-full text-sm font-bold shadow">Handlooms</button>
+      </div>
+    </div>
+    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <p class="text-gray-500 col-span-3 text-center py-10">Loading the bazaar...</p>
+    </div>
+  </main>
+
+  <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden justify-end z-50 transition-opacity">
+    <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col transform transition-transform">
+      <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-amber-50">
+        <h3 class="text-2xl font-bold text-amber-900">Your Cart 🛒</h3>
+        <button onclick="toggleModal('cart-modal')" class="text-gray-500 hover:text-red-500 font-bold text-xl">&times;</button>
+      </div>
+      <div id="cart-items" class="flex-grow p-6 overflow-y-auto space-y-4">
+        </div>
+      <div class="p-6 border-t border-gray-200 bg-gray-50">
+        <div class="flex justify-between items-center mb-4 text-xl font-bold">
+          <span>Total:</span>
+          <span id="cart-total" class="text-green-700">₹0</span>
+        </div>
+        <button onclick="checkoutCart()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow-lg">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="orders-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden justify-center items-center z-50">
+    <div class="bg-white w-full max-w-2xl p-8 rounded-xl shadow-2xl relative max-h-[80vh] flex flex-col">
+      <button onclick="toggleModal('orders-modal')" class="absolute top-4 right-6 text-gray-500 hover:text-red-500 font-bold text-2xl">&times;</button>
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">📦 My Order History</h3>
+      <div id="orders-list" class="overflow-y-auto flex-grow space-y-4">
+        <p class="text-gray-500 text-center py-4">Loading your orders...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex justify-center items-center z-50 backdrop-blur-sm">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full border-t-4 border-amber-600 relative">
+      <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Haat Bazar UPI</h3>
+      <p class="text-sm text-gray-500 mb-6 font-medium">Test Mode: Enter any UPI ID.</p>
+      <div class="mb-5 bg-amber-50 p-4 rounded-lg text-center border border-amber-100">
+        <label class="block text-xs font-bold text-amber-800 uppercase mb-1">Amount to Pay</label>
+        <p id="modal-amount" class="text-4xl font-black text-green-600">₹0</p>
+      </div>
+      <div class="mb-6">
+        <input type="text" placeholder="user@okaxis" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 font-medium">
+      </div>
+      <button id="confirm-pay-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg shadow-lg">Pay Securely</button>
+      <button onclick="toggleModal('payment-modal')" class="w-full mt-3 bg-gray-100 text-gray-600 font-bold py-3 rounded-lg">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. INITIALIZE SUPABASE ---
+    const SUPABASE_URL = 'https://ahzwfomsjerhtgewgbqz.supabase.co'; // <-- PASTE URL
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoendmb21zamVyaHRnZXdnYnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTg2NjEsImV4cCI6MjA5MDYzNDY2MX0.oahDhu2gyawQwCAxGqacjNxYH4O_5cRUr51nX67oYrM'; // <-- PASTE KEY
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    const backendUrl = window.location.origin;
+    let allProducts = [];
+    let currentUserEmail = null;
+    let cart = JSON.parse(localStorage.getItem('haat_cart')) || [];
+
+    // --- 2. AUTH & NAVBAR SETUP ---
+    // --- 2. AUTH & BULLETPROOF SETUP ---
+    async function initApp() {
+      const authContainer = document.getElementById('auth-buttons');
+      
+      try {
+        // Safely check if a user is logged in
+        const { data, error } = await supabaseClient.auth.getUser();
+        const user = data?.user;
+
+        if (user && !error) {
+          currentUserEmail = user.email;
+          authContainer.innerHTML = `
+            <button onclick="toggleModal('orders-modal'); fetchMyOrders();" class="text-sm font-bold text-amber-900 bg-amber-100 hover:bg-white px-4 py-2 rounded shadow transition">📦 Orders</button>
+            <button onclick="toggleModal('cart-modal'); renderCart();" class="text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded shadow transition">🛒 Cart (<span id="cart-count">${cart.length}</span>)</button>
+            <button onclick="logout()" class="text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded shadow ml-2 transition">Logout</button>
+          `;
+        } else {
+          // Trigger the catch block if no user is found
+          throw new Error("No active session");
+        }
+      } catch (err) {
+        // FALLBACK: If auth fails or user is not logged in, show the Login button
+        authContainer.innerHTML = `
+          <a href="/login.html" class="text-sm font-bold hover:bg-amber-100 text-amber-900 bg-amber-50 px-6 py-2 rounded-full shadow-md ml-2 transition">Login / Sign Up</a>
+        `;
+      }
+
+      // CRITICAL: Always load the marketplace, regardless of whether auth succeeded or failed!
+      loadMarketplace();
+    }
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('userRole');
+      window.location.reload();
+    }
+
+    // --- 3. MARKETPLACE RENDERING ---
+    async function loadMarketplace() {
+      try {
+        const response = await fetch(`${backendUrl}/api/products`);
+        allProducts = await response.json();
+        renderProducts(allProducts);
+      } catch (error) {
+        console.error('Error loading market:', error);
+      }
+    }
+
+    function renderProducts(productsToDisplay) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = ''; 
+
+      productsToDisplay.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 flex flex-col';
+        const imgUrl = product.image_url || 'https://via.placeholder.com/400x300?text=Haat+Bazar';
+        
+        let actionButton = currentUserEmail 
+          ? `<button onclick="addToCart(${product.id}, '${product.title}', ${product.price}, '${imgUrl}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors w-full mt-4">Add to Cart 🛒</button>`
+          : `<button onclick="window.location.href='/login.html'" class="bg-gray-800 hover:bg-black text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors w-full mt-4">Login to Buy</button>`;
+
+        card.innerHTML = `
+          <img src="${imgUrl}" class="w-full h-48 object-cover">
+          <div class="p-6 flex flex-col flex-grow">
+            <h3 class="text-xl font-extrabold text-gray-800">${product.title}</h3>
+            <p class="text-xs text-amber-700 font-bold mt-1 uppercase">By ${product.artisan_name || 'Local Artisan'}</p>
+            <p class="text-gray-600 text-sm mt-3 line-clamp-2 flex-grow">${product.description}</p>
+            <span class="text-3xl font-black text-green-700 mt-4">₹${product.price}</span>
+            ${actionButton}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterProducts(keyword) {
+      if (keyword === 'all') return renderProducts(allProducts);
+      const filtered = allProducts.filter(p => p.title.toLowerCase().includes(keyword.toLowerCase()) || p.description.toLowerCase().includes(keyword.toLowerCase()));
+      renderProducts(filtered);
+    }
+
+    // --- 4. CART LOGIC ---
+    function addToCart(id, title, price, img) {
+      cart.push({ id, title, price, img });
+      localStorage.setItem('haat_cart', JSON.stringify(cart));
+      document.getElementById('cart-count').innerText = cart.length;
+      alert(`${title} added to cart!`);
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      let total = 0;
+      container.innerHTML = '';
+      
+      if(cart.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center mt-10">Your cart is empty.</p>';
+      } else {
+        cart.forEach((item, index) => {
+          total += Number(item.price);
+          container.innerHTML += `
+            <div class="flex items-center gap-4 bg-white p-3 rounded shadow-sm border">
+              <img src="${item.img}" class="w-16 h-16 object-cover rounded">
+              <div class="flex-grow">
+                <h4 class="font-bold text-gray-800 text-sm">${item.title}</h4>
+                <p class="text-green-700 font-bold">₹${item.price}</p>
+              </div>
+              <button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-sm hover:underline">Remove</button>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('cart-total').innerText = `₹${total}`;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('haat_cart', JSON.stringify(cart));
+      document.getElementById('cart-count').innerText = cart.length;
+      renderCart();
+    }
+
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if(modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // --- 5. CHECKOUT & ORDERS LOGIC ---
+    let currentPendingOrderId = null;
+
+    async function checkoutCart() {
+      if(cart.length === 0) return alert("Add items to your cart first!");
+      const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+      
+      try {
+        const response = await fetch(`${backendUrl}/api/orders/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ price: total, buyer_email: currentUserEmail })
+        });
+        const data = await response.json();
+        
+        currentPendingOrderId = data.dbOrderId;
+        document.getElementById('modal-amount').innerText = `₹${total}`;
+        toggleModal('cart-modal'); // Close cart
+        toggleModal('payment-modal'); // Open payment
+      } catch (error) {
+        alert("Checkout failed.");
+      }
+    }
+
+    document.getElementById('confirm-pay-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('confirm-pay-btn');
+      btn.innerText = "Processing..."; btn.disabled = true;
+
+      try {
+        await fetch(`${backendUrl}/api/orders/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dbOrderId: currentPendingOrderId })
+        });
+
+        alert("Payment Successful! Your orders will be processed.");
+        cart = []; // Empty the cart
+        localStorage.removeItem('haat_cart');
+        document.getElementById('cart-count').innerText = '0';
+        
+        toggleModal('payment-modal');
+      } catch (error) {
+        alert("Payment processing failed.");
+      } finally {
+        btn.innerText = "Pay Securely"; btn.disabled = false;
+      }
+    });
+
+    async function fetchMyOrders() {
+      try {
+        const response = await fetch(`${backendUrl}/api/orders/my-orders?email=${currentUserEmail}`);
+        const orders = await response.json();
+        
+        const list = document.getElementById('orders-list');
+        list.innerHTML = '';
+        
+        if(orders.length === 0) {
+          list.innerHTML = '<p class="text-gray-500 text-center py-4">You have not placed any orders yet.</p>';
+          return;
+        }
+
+        orders.forEach(order => {
+          const date = new Date(order.created_at).toLocaleDateString();
+          const badgeColor = order.payment_status === 'PAID' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200';
+          
+          list.innerHTML += `
+            <div class="border border-gray-200 p-4 rounded-lg flex justify-between items-center shadow-sm hover:shadow transition">
+              <div>
+                <p class="text-xs text-gray-500 font-mono mb-1">Order #${order.razorpay_order_id}</p>
+                <p class="font-bold text-gray-800">Total: ₹${order.total_amount}</p>
+                <p class="text-sm text-gray-600">Placed on: ${date}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeColor}">
+                ${order.payment_status}
+              </span>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    }
+
+    // Start App
+    initApp();
+  </script>
+</body>
+</html>

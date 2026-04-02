@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NGO Dashboard - Haat Bazar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <nav class="bg-amber-800 p-4 text-white shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <a href="/index.html" class="text-2xl font-bold tracking-wide hover:text-amber-200">🏕️ Digital Haat Bazar</a>
+      <div class="space-x-4">
+        <a href="/artisan.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-700 px-3 py-1 rounded">Seller Portal</a>
+        <a href="/ngo.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-900 px-3 py-1 rounded">NGO Dashboard</a>
+      </div>
+    </div>
+  </nav>
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">NGO Approval Dashboard</h1>
+    
+    <div id="pending-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <p class="text-gray-500">Loading pending products...</p>
+    </div>
+  </div>
+
+  <!-- <script>
+    const backendUrl = 'http://localhost:3000'; // Change if your port is different
+
+    // Fetch pending products
+    async function fetchPendingProducts() {
+      try {
+        const response = await fetch(`${backendUrl}/api/admin/pending-products`);
+        const products = await response.json();
+        
+        const listContainer = document.getElementById('pending-list');
+        listContainer.innerHTML = ''; // Clear loading text
+
+        if(products.length === 0) {
+            listContainer.innerHTML = '<p class="text-green-600 font-semibold">All caught up! No pending approvals.</p>';
+            return;
+        }
+
+        products.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'bg-white p-4 rounded shadow flex justify-between items-center';
+          card.innerHTML = `
+            <div>
+              <h2 class="text-xl font-semibold">${product.title}</h2>
+              <p class="text-gray-600">₹${product.price}</p>
+            </div>
+            <button onclick="approveProduct(${product.id})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+              Approve
+            </button>
+          `;
+          listContainer.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    // Approve product action
+    async function approveProduct(id) {
+      try {
+        const response = await fetch(`${backendUrl}/api/admin/approve-product/${id}`, {
+          method: 'PUT'
+        });
+        
+        if(response.ok) {
+          alert('Product Approved!');
+          fetchPendingProducts(); // Refresh the list
+        } else {
+          alert('Failed to approve product.');
+        }
+      } catch (error) {
+        console.error('Error approving:', error);
+      }
+    }
+
+    // Load data on page start
+    fetchPendingProducts();
+  </script> -->
+  <script>
+    const backendUrl = window.location.origin;
+
+    async function fetchPendingProducts() {
+      try {
+        const response = await fetch(`${backendUrl}/api/admin/pending-products`);
+        const products = await response.json();
+        
+        const listContainer = document.getElementById('pending-list');
+        listContainer.innerHTML = ''; 
+
+        if(products.length === 0) {
+            listContainer.innerHTML = '<p class="text-green-600 font-semibold text-lg col-span-2">All caught up! No pending approvals.</p>';
+            return;
+        }
+
+        products.forEach(product => {
+          const card = document.createElement('div');
+          // Changed layout to a flexbox that handles images nicely
+          card.className = 'bg-white p-4 rounded-lg shadow border border-gray-200 flex flex-col md:flex-row gap-6 items-start';
+          
+          // Use the uploaded image, or a fallback if something broke
+          const imgUrl = product.image_url || 'https://via.placeholder.com/150?text=No+Image';
+
+          card.innerHTML = `
+            <img src="${imgUrl}" alt="Product Image" class="w-full md:w-40 h-40 object-cover rounded border bg-gray-50">
+            
+            <div class="flex-grow">
+              <h2 class="text-2xl font-bold text-gray-800">${product.title}</h2>
+              <p class="text-sm font-semibold text-amber-600 mb-2">
+                Crafted by: <span class="text-gray-800">${product.artisan_name || 'Unknown'}</span> from <span class="text-gray-800">${product.village || 'Unknown Region'}</span>
+              </p>
+              <p class="text-gray-600 mb-3 bg-gray-50 p-2 rounded text-sm">${product.description}</p>
+              <p class="text-xl font-bold text-green-700">₹${product.price}</p>
+            </div>
+
+            <div class="flex flex-col gap-3 w-full md:w-auto mt-4 md:mt-0">
+              <button onclick="approveProduct(${product.id})" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded font-bold shadow transition-colors">
+                Approve
+              </button>
+              <button onclick="rejectProduct(${product.id})" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-bold shadow transition-colors">
+                Reject
+              </button>
+            </div>
+          `;
+          listContainer.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    async function approveProduct(id) {
+      try {
+        const response = await fetch(`${backendUrl}/api/admin/approve-product/${id}`, { method: 'PUT' });
+        if(response.ok) {
+          fetchPendingProducts(); 
+        }
+      } catch (error) {
+        console.error('Error approving:', error);
+      }
+    }
+
+    // New Reject Function
+    async function rejectProduct(id) {
+      if(!confirm("Are you sure you want to reject and delete this product?")) return;
+      
+      try {
+        const response = await fetch(`${backendUrl}/api/admin/reject-product/${id}`, { method: 'DELETE' });
+        if(response.ok) {
+          fetchPendingProducts(); 
+        }
+      } catch (error) {
+        console.error('Error rejecting:', error);
+      }
+    }
+
+    fetchPendingProducts();
+
+    // Simple Route Protection
+  const currentRole = localStorage.getItem('userRole');
+  // If not logged in, or if a buyer tries to access NGO/Artisan pages, kick them out
+  if (!currentRole || currentRole === 'buyer') {
+    window.location.href = '/login.html';
+  }
+
+  // Add a quick logout button to the navbar via JS
+  document.querySelector('.space-x-4').innerHTML += `
+    <button onclick="logout()" class="text-sm font-medium hover:underline text-red-200 bg-red-800 px-4 py-2 rounded shadow ml-2">Logout</button>
+  `;
+
+  function logout() {
+    localStorage.removeItem('userRole');
+    window.location.href = '/login.html';
+  }
+  </script>
+</body>
+</html>

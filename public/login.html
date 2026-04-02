@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Haat Bazar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-amber-50 min-h-screen flex items-center justify-center font-sans p-4">
+
+  <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-amber-100">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-extrabold text-amber-900 tracking-tight">🏕️ Haat Bazar</h1>
+      <p class="text-gray-500 mt-2 font-medium">Sign in to your account</p>
+    </div>
+
+    <div class="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
+      <button onclick="switchTab('buyer')" id="tab-buyer" class="flex-1 py-2 rounded-md font-bold text-sm bg-white shadow text-amber-700 transition">Buyer</button>
+      <button onclick="switchTab('artisan')" id="tab-artisan" class="flex-1 py-2 rounded-md font-bold text-sm text-gray-500 hover:text-amber-700 transition">Artisan</button>
+      <button onclick="switchTab('ngo')" id="tab-ngo" class="flex-1 py-2 rounded-md font-bold text-sm text-gray-500 hover:text-amber-700 transition">NGO Admin</button>
+    </div>
+
+    <form id="email-form" class="space-y-5">
+      <h2 id="form-title" class="text-lg font-bold text-gray-800">Buyer Login</h2>
+      <div>
+        <label class="block text-sm font-bold text-gray-700">Email Address</label>
+        <input type="email" id="email" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-gray-700">Password</label>
+        <input type="password" id="password" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm">
+      </div>
+      
+      <div class="flex gap-3 mt-4">
+        <button type="button" onclick="handleEmailAuth('login')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-lg shadow-lg transition transform hover:scale-[1.02]">
+          Sign In
+        </button>
+        <button type="button" onclick="handleEmailAuth('register')" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white font-extrabold py-3 rounded-lg shadow-lg transition transform hover:scale-[1.02]">
+          Create Account
+        </button>
+      </div>
+    </form>
+
+    <form id="phone-form" class="space-y-5 hidden">
+      <h2 class="text-lg font-bold text-gray-800">Artisan Secure Login</h2>
+      <div id="phone-step">
+        <label class="block text-sm font-bold text-gray-700">Mobile Number</label>
+        <div class="flex mt-1 shadow-sm rounded-lg overflow-hidden border border-gray-300 focus-within:ring-2 focus-within:ring-amber-500">
+          <span class="bg-gray-100 px-4 py-3 text-gray-600 font-bold border-r border-gray-300">+91</span>
+          <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="9876543210" required class="w-full px-4 py-3 focus:outline-none">
+        </div>
+        <button type="button" onclick="sendMockOTP()" class="w-full mt-4 bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-lg shadow-lg transition">
+          Get OTP
+        </button>
+      </div>
+
+      <div id="otp-step" class="hidden">
+        <label class="block text-sm font-bold text-gray-700">Enter OTP</label>
+        <p class="text-xs text-green-600 mb-2 font-bold">✓ OTP sent to your number (Use 1234)</p>
+        <input type="text" id="otp" placeholder="1234" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm text-center tracking-widest font-mono text-xl">
+        <button type="button" onclick="verifyMockOTP()" class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-extrabold py-3 rounded-lg shadow-lg transition">
+          Verify & Login
+        </button>
+      </div>
+    </form>
+    
+    <p id="auth-message" class="mt-4 text-center text-sm font-bold text-red-500"></p>
+  </div>
+
+  <script>
+    // // ==========================================
+    // // 1. INITIALIZE SUPABASE
+    // // ==========================================
+    const SUPABASE_URL = 'https://ahzwfomsjerhtgewgbqz.supabase.co'; // PASTE FROM .ENV
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoendmb21zamVyaHRnZXdnYnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTg2NjEsImV4cCI6MjA5MDYzNDY2MX0.oahDhu2gyawQwCAxGqacjNxYH4O_5cRUr51nX67oYrM'; // PASTE FROM .ENV
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentRole = 'buyer';
+
+    // ==========================================
+    // 2. UI LOGIC (Tabs & Forms)
+    // ==========================================
+    function switchTab(role) {
+      currentRole = role;
+      
+      // Reset styles
+      ['buyer', 'artisan', 'ngo'].forEach(r => {
+        document.getElementById(`tab-${r}`).className = "flex-1 py-2 rounded-md font-bold text-sm text-gray-500 hover:text-amber-700 transition";
+      });
+      
+      // Active style
+      document.getElementById(`tab-${role}`).className = "flex-1 py-2 rounded-md font-bold text-sm bg-white shadow text-amber-700 transition";
+      
+      // Toggle Forms
+      if (role === 'artisan') {
+        document.getElementById('email-form').classList.add('hidden');
+        document.getElementById('phone-form').classList.remove('hidden');
+      } else {
+        document.getElementById('email-form').classList.remove('hidden');
+        document.getElementById('phone-form').classList.add('hidden');
+        document.getElementById('form-title').innerText = role === 'ngo' ? 'NGO Admin Login' : 'Buyer Login';
+      }
+      document.getElementById('auth-message').innerText = "";
+    }
+
+    // 3. EMAIL/PASSWORD AUTH (Buyers & NGOs)
+    async function handleEmailAuth(action) {
+      // Basic validation
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('auth-message');
+      
+      if (!email || !password) {
+        msg.innerText = "Please enter both email and password.";
+        msg.className = "mt-4 text-center text-sm font-bold text-red-500";
+        return;
+      }
+
+      msg.innerText = action === 'login' ? "Signing in..." : "Creating account...";
+      msg.className = "mt-4 text-center text-sm font-bold text-blue-500";
+
+      let authResult;
+
+      // Handle the two distinct actions
+      if (action === 'login') {
+        authResult = await supabaseClient.auth.signInWithPassword({ email, password });
+      } else if (action === 'register') {
+        authResult = await supabaseClient.auth.signUp({ email, password });
+        
+        // Supabase sometimes requires email confirmation by default. 
+        // If data.user is null but there's no error, it means check email.
+        if (!authResult.error && authResult.data?.user?.identities?.length === 0) {
+            msg.innerText = "Account already exists! Please Sign In instead.";
+            msg.className = "mt-4 text-center text-sm font-bold text-red-500";
+            return;
+        }
+      }
+
+      // Handle Errors or Success
+      if (authResult.error) {
+        msg.innerText = authResult.error.message;
+        msg.className = "mt-4 text-center text-sm font-bold text-red-500";
+      } else {
+        localStorage.setItem('userRole', currentRole);
+        msg.innerText = action === 'login' ? "Welcome back! Redirecting..." : "Account created! Redirecting...";
+        msg.className = "mt-4 text-center text-sm font-bold text-green-500";
+        
+        setTimeout(() => {
+          window.location.href = currentRole === 'ngo' ? '/ngo.html' : '/index.html';
+        }, 1000);
+      }
+    }
+    // ==========================================
+    // 4. MOCK OTP AUTH (Artisans)
+    // ==========================================
+    function sendMockOTP() {
+      const phone = document.getElementById('phone').value;
+      if(phone.length !== 10) return alert("Enter a valid 10-digit number");
+      
+      document.getElementById('phone-step').classList.add('hidden');
+      document.getElementById('otp-step').classList.remove('hidden');
+    }
+
+    async function verifyMockOTP() {
+      const phone = document.getElementById('phone').value;
+      const otp = document.getElementById('otp').value;
+      const msg = document.getElementById('auth-message');
+
+      if (otp !== '1234') {
+        msg.innerText = "Invalid OTP. Use 1234 for testing.";
+        return;
+      }
+
+      msg.innerText = "Verifying...";
+      msg.className = "mt-4 text-center text-sm font-bold text-blue-500";
+
+      const phantomEmail = `${phone}@artisan.haatbazar.local`;
+      const phantomPassword = `SecureOTP_${phone}`; 
+
+      // FIXED: Using supabaseClient
+      let { data, error } = await supabaseClient.auth.signInWithPassword({ email: phantomEmail, password: phantomPassword });
+      
+      if (error) {
+        await supabaseClient.auth.signUp({ email: phantomEmail, password: phantomPassword });
+      }
+
+      localStorage.setItem('userRole', 'artisan');
+      msg.innerText = "OTP Verified! Redirecting...";
+      msg.className = "mt-4 text-center text-sm font-bold text-green-500";
+      
+      setTimeout(() => {
+        window.location.href = '/artisan.html';
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

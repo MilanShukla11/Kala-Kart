@@ -1,0 +1,220 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artisan Portal - Haat Bazar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8 font-sans">
+    <nav class="bg-amber-800 p-4 text-white shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <a href="/index.html" class="text-2xl font-bold tracking-wide hover:text-amber-200">🏕️ Digital Haat Bazar</a>
+      <div class="space-x-4">
+        <a href="/artisan.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-700 px-3 py-1 rounded">Seller Portal</a>
+        <a href="/ngo.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-900 px-3 py-1 rounded">NGO Dashboard</a>
+      </div>
+    </div>
+  </nav>
+  <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold mb-2 text-gray-800">Artisan Portal</h1>
+    <p class="text-gray-600 mb-6">List your artifact. Our NGO partners will review and publish it to the Haat Bazar.</p>
+    
+    <form id="upload-form" class="space-y-4" enctype="multipart/form-data">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Artisan Name</label>
+          <input type="text" id="artisan_name" name="artisan_name" required class="mt-1 w-full px-4 py-2 border rounded-md focus:ring-amber-500 focus:border-amber-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Village / Region</label>
+          <input type="text" id="village" name="village" required class="mt-1 w-full px-4 py-2 border rounded-md focus:ring-amber-500 focus:border-amber-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Product Title</label>
+        <input type="text" id="title" name="title" required class="mt-1 w-full px-4 py-2 border rounded-md focus:ring-amber-500 focus:border-amber-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea id="description" name="description" rows="3" required class="mt-1 w-full px-4 py-2 border rounded-md focus:ring-amber-500 focus:border-amber-500"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Price (₹)</label>
+        <input type="number" id="price" name="price" required class="mt-1 w-full px-4 py-2 border rounded-md focus:ring-amber-500 focus:border-amber-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Product Image</label>
+        <input type="file" id="image" name="image" accept="image/*" required class="mt-1 w-full px-4 py-2 border rounded-md focus:ring-amber-500 focus:border-amber-500">
+      </div>
+
+      <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-md transition-colors">
+        Submit to NGO
+      </button>
+    </form>
+
+  <script>
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btn = e.target.querySelector('button');
+      btn.innerText = "Uploading...";
+      btn.disabled = true;
+
+      // Use FormData to handle the file upload automatically
+      const formData = new FormData(e.target);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/artisan/products', {
+          method: 'POST',
+          body: formData // Notice we don't use JSON.stringify or set Content-Type headers for FormData
+        });
+
+        if (response.ok) {
+          alert('Success! Your product has been sent to the NGO for approval.');
+          e.target.reset(); 
+        } else {
+          alert('Failed to submit product.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        btn.innerText = "Submit to NGO";
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artisan Portal - Haat Bazar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-50 p-0 font-sans min-h-screen">
+  
+  <nav class="bg-amber-800 p-4 text-white shadow-md relative z-10">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <a href="/index.html" class="text-2xl font-bold tracking-wide hover:text-amber-200">🏕️ Digital Haat Bazar</a>
+      <div class="space-x-4">
+        <a href="/artisan.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-700 px-4 py-2 rounded shadow">Seller Portal</a>
+        <a href="/ngo.html" class="text-sm font-medium hover:underline text-amber-100 bg-amber-900 px-4 py-2 rounded shadow">NGO Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-10 border border-amber-100">
+    <h1 class="text-3xl font-extrabold mb-2 text-gray-800">Artisan Portal</h1>
+    <p class="text-gray-600 mb-8 font-medium">List your artifact. Our NGO partners will review and publish it to the Haat Bazar.</p>
+    
+    <form id="upload-form" class="space-y-5" enctype="multipart/form-data">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-bold text-gray-700">Artisan Name</label>
+          <input type="text" id="artisan_name" name="artisan_name" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-gray-700">Village / Region</label>
+          <input type="text" id="village" name="village" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700">Product Title</label>
+        <input type="text" id="title" name="title" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition">
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700">Category</label>
+        <select id="category_id" name="category_id" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm bg-white transition">
+          <option value="" disabled selected>Select the craft category</option>
+          <option value="1">Terracotta & Pottery</option>
+          <option value="2">Handlooms & Weaves</option>
+          <option value="3">Tribal Art & Paintings</option>
+          <option value="4">Bamboo & Cane Crafts</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700">Description</label>
+        <textarea id="description" name="description" rows="3" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700">Price (₹)</label>
+        <input type="number" id="price" name="price" required min="1" class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition">
+      </div>
+
+      <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+        <label class="block text-sm font-bold text-amber-900 mb-2">Upload Product Image</label>
+        <input type="file" id="image" name="image" accept="image/*" required class="w-full text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-amber-600 file:text-white hover:file:bg-amber-700 transition">
+      </div>
+
+      <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-4 rounded-lg shadow-lg transition-transform transform hover:scale-[1.01] mt-4">
+        Submit to NGO for Review
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btn = e.target.querySelector('button');
+      btn.innerText = "Uploading to Database...";
+      btn.disabled = true;
+
+      // FormData handles both the text fields and the image file automatically
+      const formData = new FormData(e.target);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/artisan/products', {
+          method: 'POST',
+          body: formData 
+        });
+
+        if (response.ok) {
+          alert('Success! Your product has been sent to the NGO dashboard for review.');
+          e.target.reset(); 
+          // Redirect to home so they can see the flow
+          window.location.href = '/index.html';
+        } else {
+          alert('Failed to submit product. Check your server logs.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Could not connect to the server.');
+      } finally {
+        btn.innerText = "Submit to NGO for Review";
+        btn.disabled = false;
+      }
+    });
+    // Simple Route Protection
+  const currentRole = localStorage.getItem('userRole');
+  // If not logged in, or if a buyer tries to access NGO/Artisan pages, kick them out
+  if (!currentRole || currentRole === 'buyer') {
+    window.location.href = '/login.html';
+  }
+
+  // Add a quick logout button to the navbar via JS
+  document.querySelector('.space-x-4').innerHTML += `
+    <button onclick="logout()" class="text-sm font-medium hover:underline text-red-200 bg-red-800 px-4 py-2 rounded shadow ml-2">Logout</button>
+  `;
+
+  function logout() {
+    localStorage.removeItem('userRole');
+    window.location.href = '/login.html';
+  }
+  </script>
+  
+</body>
+</html>
