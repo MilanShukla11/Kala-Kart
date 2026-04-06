@@ -177,7 +177,7 @@
       const formData = new FormData(e.target);
 
       try {
-        const response = await fetch('http://localhost:3000/api/artisan/products', {
+        const response = await fetch('/api/artisan/products', {
           method: 'POST',
           body: formData 
         });
