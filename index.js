@@ -3,6 +3,15 @@ const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+
+// Initialize Razorpay
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -20,6 +29,8 @@ const dir = './public/uploads';
 if (!fs.existsSync(dir)){
     fs.mkdirSync(dir, { recursive: true });
 }
+
+
 
 // Configure Multer to save files in public/uploads
 const storage = multer.diskStorage({
@@ -39,7 +50,7 @@ app.get('/api/admin/pending-products', async (req, res) => {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    .eq('is_approved', false); // Only fetch unapproved items
+    .eq('is_approved', false); 
 
   if (error) return res.status(400).json({ error: error.message });
   res.json(data);
@@ -81,27 +92,39 @@ app.get('/api/products', async (req, res) => {
   res.json(data);
 });
 
-// POST: Create a new order (Mock Version)
-// POST: Create a new order (Updated for Cart Checkout)
+// POST: Create a real Razorpay order
 app.post('/api/orders/create', async (req, res) => {
   const { price, buyer_email } = req.body; 
   
   try {
-    const mockTransactionId = `txn_${Math.floor(Math.random() * 1000000)}`;
+    // 1. Tell Razorpay to create an order (Amount must be in paise/smallest currency unit)
+    const options = {
+      amount: price * 100, 
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`
+    };
+    const razorpayOrder = await razorpay.orders.create(options);
 
+    // 2. Save the pending order to Supabase using the REAL Razorpay Order ID
     const { data: dbOrder, error } = await supabase
       .from('orders')
       .insert([{ 
         total_amount: price, 
         payment_status: 'PENDING', 
-        razorpay_order_id: mockTransactionId,
-        buyer_email: buyer_email // Saving the user's email
+        razorpay_order_id: razorpayOrder.id,
+        buyer_email: buyer_email
       }])
       .select()
       .single();
 
     if (error) throw error;
-    res.json({ dbOrderId: dbOrder.id, amount: price });
+    
+    // Send both IDs back to the frontend
+    res.json({ 
+        dbOrderId: dbOrder.id, 
+        razorpayOrderId: razorpayOrder.id, 
+        amount: price 
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -125,15 +148,28 @@ app.get('/api/orders/my-orders', async (req, res) => {
 
 // POST: Verify payment and update database (Remains exactly the same!)
 app.post('/api/orders/verify', async (req, res) => {
-  const { dbOrderId } = req.body;
-  
-  const { error } = await supabase
-    .from('orders')
-    .update({ payment_status: 'PAID' })
-    .eq('id', dbOrderId);
-      
-  if (error) return res.status(500).json({ error: error.message });
-  res.json({ success: true });
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, dbOrderId } = req.body;
+
+  // 1. Generate our own signature using our secret key
+  const sign = razorpay_order_id + "|" + razorpay_payment_id;
+  const expectedSign = crypto
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .update(sign.toString())
+    .digest("hex");
+
+  // 2. Compare our signature with the one Razorpay sent
+  if (razorpay_signature === expectedSign) {
+    // Payment is 100% legit. Update Supabase.
+    await supabase
+      .from('orders')
+      .update({ payment_status: 'PAID' })
+      .eq('id', dbOrderId);
+
+    res.json({ success: true, message: "Payment verified!" });
+  } else {
+    // Someone is trying to fake a payment!
+    res.status(400).json({ success: false, message: "Invalid signature" });
+  }
 });
 
 // POST: Artisan uploads a new product (Now handles images!)
